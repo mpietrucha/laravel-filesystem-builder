@@ -40,7 +40,7 @@ class Builder
         }
 
         return new SplFileInfo(
-            collect([$this->root(), $file])->toDirectory()
+            collect([$this->root(), $file])->toDirectory(), dirname($file), $file
         );
     }
 
