@@ -10,6 +10,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Collection;
 use Mpietrucha\Support\Concerns\HasFactory;
 use Mpietrucha\Support\Types;
+use Illuminate\Support\Facades\File;
 
 class Builder
 {
@@ -40,7 +41,7 @@ class Builder
         }
 
         return new SplFileInfo(
-            collect([$this->root(), $file])->toDirectory(), dirname($file), $file
+            collect([$this->root(), $file])->toDirectory(), File::dirname($file), $file
         );
     }
 
