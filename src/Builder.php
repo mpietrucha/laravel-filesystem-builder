@@ -46,7 +46,9 @@ class Builder
 
     protected function root(): ?string
     {
-        return $this->root ??= Arr::get($this->adapter->config, 'root', '');
+        $config = invade($this->adapter)->config;
+
+        return $this->root ??= Arr::get($config, 'root');
     }
 
     protected function assertPath(?string $path): void
