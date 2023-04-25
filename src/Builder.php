@@ -3,14 +3,14 @@
 namespace Mpietrucha\Laravel\Filesystem;
 
 use Exception;
-use Symfony\Component\Finder\SplFileInfo;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Arr;
-use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Collection;
-use Mpietrucha\Support\Concerns\HasFactory;
 use Mpietrucha\Support\Types;
-use Illuminate\Support\Facades\File;
+use Mpietrucha\Support\Rescue;
+use Illuminate\Support\Arr;
+use Mpietrucha\Support\File;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Mpietrucha\Support\Concerns\HasFactory;
+use Symfony\Component\Finder\SplFileInfo;
 
 class Builder
 {
@@ -22,37 +22,28 @@ class Builder
     {
     }
 
-    public function files(?string $path): Collection
-    {
-        return collect($this->adapter->files($path))->map($this->build(...));
-    }
-
-    public function allFiles(?string $path): Collection
-    {
-        $this->assertPath($path);
-
-        return collect($this->adapter->allFiles($path))->map($this->build(...));
-    }
-
-    protected function build(string|SplFileInfo $file): SplFileInfo
+    public function enshure(string|SplFileInfo $file): SplFileInfo
     {
         if (! Types::string($file)) {
             return $file;
         }
 
-        return new SplFileInfo(
-            collect([$this->root(), $file])->toDirectory(), File::dirname($file), $file
+        return new SplFileInfo($this->path($file), File::dirname($file), $file);
+    }
+
+    public function path(?string $path): string
+    {
+        return collect([$this->root(), $path])->toDirectory();
+    }
+
+    public function root(): ?string
+    {
+        return $this->root ??= Arr::get(
+            Rescue::create(fn () => invade($this->adapter)->config)->call([]), 'root'
         );
     }
 
-    protected function root(): ?string
-    {
-        $config = invade($this->adapter)->config;
-
-        return $this->root ??= Arr::get($config, 'root');
-    }
-
-    protected function assertPath(?string $path): void
+    public function assert(?string $path): void
     {
         if (! $this->adapter instanceOf Filesystem) {
             return;
