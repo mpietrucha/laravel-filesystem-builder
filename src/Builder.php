@@ -28,7 +28,7 @@ class Builder
             return $file;
         }
 
-        return new SplFileInfo($this->path($file), File::dirname($file), $file);
+        return File::toSplFileInfo($this->path($file), $file);
     }
 
     public function path(?string $path): string
