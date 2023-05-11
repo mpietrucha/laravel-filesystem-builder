@@ -43,16 +43,12 @@ class Builder
         );
     }
 
-    public function assert(?string $path): void
+    public function assert(?string $path): self
     {
-        if (! $this->adapter instanceOf Filesystem) {
-            return;
+        if ($this->adapter instanceof Filesystem && Types::null($path)) {
+            throw new Exception('Path cannot be empty in Filesystem.');
         }
 
-        if (! Types::null($path)) {
-            return;
-        }
-
-        throw new Exception('Path cannot be empty in Filesystem.');
+        return $this;
     }
 }
