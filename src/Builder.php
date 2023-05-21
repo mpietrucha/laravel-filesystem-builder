@@ -2,7 +2,7 @@
 
 namespace Mpietrucha\Laravel\Filesystem;
 
-use Exception;
+use Mpietrucha\Exception\InvalidArgumentException;
 use Mpietrucha\Support\Types;
 use Mpietrucha\Support\Rescue;
 use Illuminate\Support\Arr;
@@ -45,9 +45,10 @@ class Builder
 
     public function assert(?string $path): self
     {
-        if ($this->adapter instanceof Filesystem && Types::null($path)) {
-            throw new Exception('Path cannot be empty in Filesystem.');
-        }
+        throw_if(
+            $this->adapter instanceof Filesystem && Types::null($path),
+            new InvalidArgumentException('Path cannot be empty when processing ', [Filesystem::class])
+        );
 
         return $this;
     }
