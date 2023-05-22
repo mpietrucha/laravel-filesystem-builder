@@ -45,10 +45,9 @@ class Builder
 
     public function assert(?string $path): self
     {
-        throw_if(
-            $this->adapter instanceof Filesystem && Types::null($path),
-            new InvalidArgumentException('Path cannot be empty when processing ', [Filesystem::class])
-        );
+        throw_if($this->adapter instanceof Filesystem && Types::null($path), new InvalidArgumentException(
+            'Path cannot be empty when processing ', [Filesystem::class]
+        ));
 
         return $this;
     }
